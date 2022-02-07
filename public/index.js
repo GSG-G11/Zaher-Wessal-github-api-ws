@@ -1,7 +1,9 @@
 (() => {
+	let username = "zaher-aa";
+
 	const globalUrl = `https://api.github.com/users/${username}`;
 	const reposUrl = `https://api.github.com/users/${username}/repos`;
-	const allLanguages = [];
+	let allLanguages = [];
 
 	function $(selector) {
 		return document.querySelector(selector);
@@ -67,6 +69,7 @@
 	function reposHandler(response) {
 		$("#github-repos-stars").textContent = totalStarsCount(response);
 		topRepo(response[0]);
+		allLanguages = [];
 		response.forEach((res, idx, self) =>
 			languages(res.languages_url, idx, self)
 		);
@@ -74,4 +77,14 @@
 
 	fetch(globalUrl, globalEndpointEdits);
 	fetch(reposUrl, reposHandler);
+
+	$("form").onsubmit = (e) => {
+		e.preventDefault();
+		const userToSearch = $(".input-field").value;
+		if (userToSearch.trim() !== "") {
+			username = userToSearch;
+			fetch(`https://api.github.com/users/${username}`, globalEndpointEdits);
+			fetch(`https://api.github.com/users/${username}/repos`, reposHandler);
+		}
+	};
 })();
